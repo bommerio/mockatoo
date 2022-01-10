@@ -27,6 +27,8 @@ class InitMacro
 
 		Console.removePrinter(Console.defaultPrinter);
 
+        // JR, 01/10/22, removed for now, I don't need it and it wasn't working
+        /*
 		#if MOCKATOO_LOG
 		
 		createTempDirectory();
@@ -35,9 +37,9 @@ class InitMacro
 
 		Console.start();
 
-		#else
+		#else*/
 		Console.stop();
-		#end
+		// #end
 	}
 
 	static function createTempDirectory()
@@ -59,7 +61,7 @@ class InitMacro
 		}
 	}
 }
-
+#if false
 class FilePrinter extends mconsole.FilePrinter
 {
 	public function new(path:String)
@@ -78,5 +80,6 @@ class FilePrinter extends mconsole.FilePrinter
 			super.print(level, params, indent, pos);
 	}
 }
+#end
 
 #end
