@@ -23,9 +23,9 @@ class InitMacro
 
 		initialized = true;
 
-		Compiler.define("no-inline");
+//		Compiler.define("no-inline");
 
-		Console.removePrinter(Console.defaultPrinter);
+//		Console.removePrinter(Console.defaultPrinter);
 
         // JR, 01/10/22, removed for now, I don't need it and it wasn't working
         /*
@@ -38,7 +38,7 @@ class InitMacro
 		Console.start();
 
 		#else*/
-		Console.stop();
+		//Console.stop();
 		// #end
 	}
 
