@@ -498,6 +498,37 @@ class MockMaker
 	}
 
 	/**
+		Rewrite the field before adding it to the new type, if needed.
+		This was added to (potentially) rebuild a property field so that
+		the declaration would be compatible with newer versions of Haxe.
+
+		Specifically, the issue is that the field we get from Haxe for a
+		property with a custom getter or setter specifies the method
+		names as "get_fieldName" or "set_fieldName" (where fieldName is)
+		the actual field name.  Haxe 3 and on will not allow you to
+		declare a property using these values, instead requiring simply
+		"get" and "set".  This method rewrites the field so that it can
+		be declared as a new property, for whatever version of Haxe we're
+		using.
+	**/
+	function rewriteFieldIfNeeded(field:Field):Field {
+		return switch (field.kind) {
+			case FProp(get, set, t, e):
+				#if (haxe_ver < 3)
+					field;
+				#else
+					var getMethod = toGetterSetter(get);
+					var setMethod = toGetterSetter(set);
+
+					var newField = Reflect.copy(field);
+					newField.kind = FProp(getMethod != "" ? "get" : get, setMethod != "" ? "set" : set, t, e);
+					return newField;
+				#end
+			default:
+				field;
+		}
+	}
+	/**
 		Returns mocked versions of all functions within the target class or interface.
 		Also cleans up constructor to call super (if a class) and to not return Void.
 	*/
@@ -584,13 +615,20 @@ class MockMaker
 				var setMethod = toGetterSetter(set);
 
 				if (getMethod != "" || setMethod != "")
+				{
+					// This is used for the mockatooProperties metadata (and subsequent mocking),
+					// not for building the class field; see below for that.
 					propertyMetas.push({name:field.name, set:setMethod, get:getMethod});
+				}
 
 				if (isInterface) 
 				{
 					//force concrete property for getter setter
 					addConcretePropertyMetadata(field);
 
+					// See comment in method; this is required because of interface changes between
+					// Haxe 2 and Haxe 3
+					field = rewriteFieldIfNeeded(field);
 					fields.push(field);
 			 
 					if (getMethod != "")
