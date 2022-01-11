@@ -279,15 +279,11 @@ class MockProxy
 
 		for (fieldName in fieldNames)
 		{	
-			#if (flash || php)
-				if (Reflect.hasField(target, fieldName))
-				{
-					if (!Reflect.isFunction(Reflect.field(target, fieldName))) continue;
-				}
-			
-			#else
-				if (Reflect.hasField(target, fieldName)) continue; //only care about methods
-			#end
+			//only care about methods
+			if (Reflect.hasField(target, fieldName))
+			{
+				if (!Reflect.isFunction(Reflect.field(target, fieldName))) continue;
+			}
 			
 			var fieldMeta = Reflect.field(fields, fieldName);
 
