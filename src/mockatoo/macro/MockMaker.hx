@@ -510,6 +510,10 @@ class MockMaker
 		"get" and "set".  This method rewrites the field so that it can
 		be declared as a new property, for whatever version of Haxe we're
 		using.
+
+		HEADS UP: the haxe Field object won't tell us if a non-prop is var or final;
+		this feels like a bug, and it means that we cannot use public final __ in
+		mocked interfaces.
 	**/
 	function rewriteFieldIfNeeded(field:Field):Field {
 		return switch (field.kind) {
